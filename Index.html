@@ -57,10 +57,7 @@ body::before {
   z-index: -1;
 }
 
-.app-container {
-  max-width: 1600px;
-  margin: 0 auto;
-}
+.app-container { max-width: 1600px; margin: 0 auto; }
 
 .header {
   background: linear-gradient(135deg, var(--surface) 0%, var(--bg-tertiary) 100%);
@@ -176,14 +173,8 @@ body::before {
   transition: all 0.3s ease;
 }
 
-.breadcrumb-item:hover {
-  color: var(--accent);
-}
-
-.breadcrumb-item.active {
-  color: var(--accent);
-  font-weight: 600;
-}
+.breadcrumb-item:hover { color: var(--accent); }
+.breadcrumb-item.active { color: var(--accent); font-weight: 600; }
 
 .main-grid {
   display: grid;
@@ -212,13 +203,8 @@ body::before {
   margin-bottom: 16px;
 }
 
-.category-tree {
-  list-style: none;
-}
-
-.category-item {
-  margin-bottom: 8px;
-}
+.category-tree { list-style: none; }
+.category-item { margin-bottom: 8px; }
 
 .category-link {
   display: flex;
@@ -264,15 +250,9 @@ body::before {
   display: none;
 }
 
-.category-children.expanded {
-  display: block;
-}
+.category-children.expanded { display: block; }
 
-.content-area {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
+.content-area { display: flex; flex-direction: column; gap: 24px; }
 
 .cards-container {
   display: grid;
@@ -303,22 +283,9 @@ body::before {
   box-shadow: var(--shadow-lg);
 }
 
-.card-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-.card-meta {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
+.card-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.card-title { font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+.card-meta { font-size: 0.75rem; color: var(--text-muted); }
 
 .empty-state {
   text-align: center;
@@ -326,16 +293,8 @@ body::before {
   color: var(--text-secondary);
 }
 
-.empty-state-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
-}
-
-.empty-state h2 {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-  color: var(--text-primary);
-}
+.empty-state-icon { font-size: 3rem; margin-bottom: 16px; }
+.empty-state h2 { font-size: 1.5rem; margin-bottom: 8px; color: var(--text-primary); }
 
 .loading {
   text-align: center;
@@ -353,9 +312,7 @@ body::before {
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .modal-overlay {
   display: none;
@@ -368,9 +325,7 @@ body::before {
   justify-content: center;
 }
 
-.modal-overlay.active {
-  display: flex;
-}
+.modal-overlay.active { display: flex; }
 
 .modal {
   background: var(--surface-elevated);
@@ -391,11 +346,7 @@ body::before {
   margin-bottom: 24px;
 }
 
-.modal-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
+.modal-title { font-size: 1.5rem; font-weight: 700; }
 .modal-close {
   background: none;
   border: none;
@@ -405,10 +356,7 @@ body::before {
   transition: all 0.3s ease;
 }
 
-.modal-close:hover {
-  color: var(--text-primary);
-}
-
+.modal-close:hover { color: var(--text-primary); }
 .modal-footer {
   display: flex;
   gap: 12px;
@@ -505,13 +453,8 @@ body::before {
   animation: slideInRight 0.4s ease;
 }
 
-.toast.success {
-  border-color: var(--success);
-}
-
-.toast.error {
-  border-color: var(--error);
-}
+.toast.success { border-color: var(--success); }
+.toast.error { border-color: var(--error); }
 
 @keyframes slideInRight {
   from { transform: translateX(400px); opacity: 0; }
@@ -519,12 +462,8 @@ body::before {
 }
 
 @media (max-width: 768px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
-  .cards-container {
-    grid-template-columns: 1fr;
-  }
+  .main-grid { grid-template-columns: 1fr; }
+  .cards-container { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -536,7 +475,7 @@ body::before {
         <div class="logo">📚</div>
         <div class="brand-text">
           <h1>Study Cards</h1>
-          <p>From your folder structure</p>
+          <p>From your folders</p>
         </div>
       </div>
       <div>
@@ -601,10 +540,16 @@ class StudyManager {
 
   async loadStructure() {
     try {
-      const response = await fetch('index.json');
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      this.structure = await response.json();
-      await this.loadAllQuestions(this.structure);
+      const response = await fetch('folders.json');
+      if (!response.ok) throw new Error('folders.json not found');
+      const folderList = await response.json();
+      
+      this.structure = { name: 'STUDY', path: './', children: [] };
+      
+      for (const folderPath of folderList.folders || []) {
+        await this.addFolderToStructure(folderPath);
+      }
+      
       return true;
     } catch (error) {
       console.error('Failed to load structure:', error);
@@ -612,25 +557,40 @@ class StudyManager {
     }
   }
 
-  async loadAllQuestions(node) {
-    if (node.questionFile) {
-      try {
-        const response = await fetch(node.questionFile);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        this.allQuestions[node.questionFile] = (data.questions || []).map((q, idx) => ({
-          ...q,
-          id: q.id || `${node.name.toLowerCase()}-${idx + 1}`
-        }));
-      } catch (error) {
-        console.error(`Failed to load ${node.questionFile}:`, error);
+  async addFolderToStructure(folderPath) {
+    const parts = folderPath.split('/');
+    let current = this.structure;
+
+    for (let i = 0; i < parts.length; i++) {
+      const name = parts[i];
+      let found = current.children?.find(c => c.name === name);
+
+      if (!found) {
+        found = {
+          name: name,
+          type: 'folder',
+          children: []
+        };
+        if (!current.children) current.children = [];
+        current.children.push(found);
       }
+
+      current = found;
     }
 
-    if (node.children) {
-      for (const child of node.children) {
-        await this.loadAllQuestions(child);
+    const questionFile = folderPath + '/question.json';
+    try {
+      const response = await fetch(questionFile);
+      if (response.ok) {
+        const data = await response.json();
+        current.questionFile = questionFile;
+        this.allQuestions[questionFile] = (data.questions || []).map((q, idx) => ({
+          ...q,
+          id: q.id || `${current.name.toLowerCase()}-${idx + 1}`
+        }));
       }
+    } catch (error) {
+      // question.json doesn't exist for this folder
     }
   }
 
@@ -690,8 +650,10 @@ class UIManager {
       contentArea.innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">❌</div>
-          <h2>Failed to Load</h2>
-          <p>Make sure index.json is in the same folder as this HTML file.</p>
+          <h2>Setup Required</h2>
+          <p>Create a <strong>folders.json</strong> file in the same folder as this HTML.</p>
+          <p style="margin-top: 16px; font-size: 0.9rem; color: var(--text-muted);">Example:</p>
+          <pre style="background: var(--surface); padding: 12px; border-radius: 8px; margin-top: 8px; text-align: left; overflow-x: auto;">{"folders": ["Resources/Math/Unit1", "Resources/Science"]}</pre>
         </div>
       `;
     }
@@ -761,7 +723,7 @@ class UIManager {
         <div class="empty-state">
           <div class="empty-state-icon">📭</div>
           <h2>No content here</h2>
-          <p>Select a category from the sidebar or create question.json files.</p>
+          <p>Select a category from the sidebar or add question.json files to your folders.</p>
         </div>
       `;
       return;

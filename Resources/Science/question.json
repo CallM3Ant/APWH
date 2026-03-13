@@ -1,0 +1,37 @@
+{
+  "questions": [
+    {
+      "text": "What is the sum of angles in a triangle?",
+      "type": "single",
+      "correct": ["180 degrees"],
+      "incorrect": [
+        "90 degrees",
+        "360 degrees",
+        "270 degrees"
+      ]
+    },
+    {
+      "text": "Which of these are properties of a rectangle?",
+      "type": "multiple",
+      "correct": [
+        "Opposite sides are equal",
+        "All angles are 90 degrees",
+        "Diagonals are equal"
+      ],
+      "incorrect": [
+        "All sides are equal",
+        "Diagonals bisect at 45 degrees"
+      ]
+    },
+    {
+      "text": "What is the area formula for a circle?",
+      "type": "single",
+      "correct": ["A = πr²"],
+      "incorrect": [
+        "A = 2πr",
+        "A = πr",
+        "A = πd²"
+      ]
+    }
+  ]
+}
