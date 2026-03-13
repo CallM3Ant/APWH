@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Cards - Folder-Based Learning</title>
+<style>
+:root {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #16213e;
+  --surface: #1e2749;
+  --surface-hover: #243055;
+  --surface-elevated: #2a3660;
+  --border: rgba(139, 92, 246, 0.15);
+  --border-hover: rgba(139, 92, 246, 0.4);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --accent: #8b5cf6;
+  --accent-hover: #7c3aed;
+  --accent-light: rgba(139, 92, 246, 0.1);
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 35px 60px -12px rgba(0, 0, 0, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.app-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow);
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.brand-text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-text p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-hover);
+}
+
+.breadcrumb {
+  padding: 16px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
+.breadcrumb-item {
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.breadcrumb-item:hover {
+  color: var(--accent);
+}
+
+.breadcrumb-item.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.category-tree {
+  list-style: none;
+}
+
+.category-item {
+  margin-bottom: 8px;
+}
+
+.category-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  width: 100%;
+  font-size: 0.95rem;
+}
+
+.category-link:hover {
+  background: var(--surface-hover);
+  color: var(--accent);
+}
+
+.category-link.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.category-toggle {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.category-children {
+  list-style: none;
+  margin-left: 16px;
+  padding-top: 8px;
+  display: none;
+}
+
+.category-children.expanded {
+  display: block;
+}
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg-tertiary) 100%);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.card:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-elevated);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.empty-state h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 20px;
+  border: 4px solid var(--surface);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.quiz-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.quiz-question {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-primary);
+}
+
+.answer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.answer-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.answer-option:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+}
+
+.answer-option input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.answer-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.answer-option.correct-answer {
+  border-color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.answer-option.incorrect-selected {
+  border-color: var(--error);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--surface);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  transition: width 0.3s ease;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  z-index: 2000;
+  animation: slideInRight 0.4s ease;
+}
+
+.toast.success {
+  border-color: var(--success);
+}
+
+.toast.error {
+  border-color: var(--error);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(400px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="logo">📚</div>
+        <div class="brand-text">
+          <h1>Study Cards</h1>
+          <p>From your folder structure</p>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="ui.exportProgress()">📥 Export Progress</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <div class="main-grid">
+    <div class="sidebar">
+      <div class="sidebar-title">Categories</div>
+      <ul class="category-tree" id="categoryTree"></ul>
+    </div>
+    <div class="content-area" id="contentArea"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+function escapeHtml(text) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+class StudyManager {
+  constructor() {
+    this.structure = null;
+    this.allQuestions = {};
+    this.currentPath = [];
+    this.progress = {};
+    this.loadProgress();
+  }
+
+  loadProgress() {
+    const saved = sessionStorage.getItem('study-progress');
+    if (saved) {
+      try {
+        this.progress = JSON.parse(saved);
+      } catch (e) {
+        this.progress = {};
+      }
+    }
+  }
+
+  saveProgress() {
+    sessionStorage.setItem('study-progress', JSON.stringify(this.progress));
+  }
+
+  recordAnswer(questionId, correct) {
+    if (!this.progress[questionId]) {
+      this.progress[questionId] = { correct: 0, attempts: 0 };
+    }
+    this.progress[questionId].attempts += 1;
+    if (correct) this.progress[questionId].correct += 1;
+    this.saveProgress();
+  }
+
+  async loadStructure() {
+    try {
+      const response = await fetch('index.json');
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      this.structure = await response.json();
+      await this.loadAllQuestions(this.structure);
+      return true;
+    } catch (error) {
+      console.error('Failed to load structure:', error);
+      return false;
+    }
+  }
+
+  async loadAllQuestions(node) {
+    if (node.questionFile) {
+      try {
+        const response = await fetch(node.questionFile);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        this.allQuestions[node.questionFile] = (data.questions || []).map((q, idx) => ({
+          ...q,
+          id: q.id || `${node.name.toLowerCase()}-${idx + 1}`
+        }));
+      } catch (error) {
+        console.error(`Failed to load ${node.questionFile}:`, error);
+      }
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        await this.loadAllQuestions(child);
+      }
+    }
+  }
+
+  navigateTo(path) {
+    this.currentPath = path;
+  }
+
+  getCurrentNode() {
+    let node = this.structure;
+    for (const pathItem of this.currentPath) {
+      if (!node.children) return null;
+      node = node.children.find(c => c.name === pathItem);
+      if (!node) return null;
+    }
+    return node;
+  }
+
+  getChildFolders() {
+    const node = this.getCurrentNode();
+    if (!node || !node.children) return [];
+    return node.children.filter(c => c.type === 'folder');
+  }
+
+  getQuestionsAtPath() {
+    const node = this.getCurrentNode();
+    if (!node || !node.questionFile) return [];
+    return this.allQuestions[node.questionFile] || [];
+  }
+
+  countQuestionsInNode(node) {
+    if (node.questionFile) {
+      return (this.allQuestions[node.questionFile] || []).length;
+    }
+    if (node.children) {
+      return node.children.reduce((sum, child) => sum + this.countQuestionsInNode(child), 0);
+    }
+    return 0;
+  }
+
+  exportProgress() {
+    return JSON.stringify(this.progress, null, 2);
+  }
+}
+
+class UIManager {
+  constructor(manager) {
+    this.manager = manager;
+  }
+
+  async init() {
+    const contentArea = document.getElementById('contentArea');
+    contentArea.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading study materials...</p></div>';
+
+    if (await this.manager.loadStructure()) {
+      this.render();
+    } else {
+      contentArea.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">❌</div>
+          <h2>Failed to Load</h2>
+          <p>Make sure index.json is in the same folder as this HTML file.</p>
+        </div>
+      `;
+    }
+  }
+
+  render() {
+    this.renderBreadcrumb();
+    this.renderSidebar();
+    this.renderContent();
+  }
+
+  renderBreadcrumb() {
+    const breadcrumb = document.getElementById('breadcrumb');
+    let html = '<span class="breadcrumb-item" onclick="ui.navigateTo([])">📚 Home</span>';
+
+    for (let i = 0; i < this.manager.currentPath.length; i++) {
+      html += ' <span style="color: var(--text-muted);">/</span> ';
+      const path = this.manager.currentPath.slice(0, i + 1);
+      const isLast = i === this.manager.currentPath.length - 1;
+      html += `<span class="breadcrumb-item ${isLast ? 'active' : ''}" onclick="ui.navigateTo(${JSON.stringify(path)})">${escapeHtml(this.manager.currentPath[i])}</span>`;
+    }
+
+    breadcrumb.innerHTML = html;
+  }
+
+  renderSidebar() {
+    const tree = document.getElementById('categoryTree');
+    if (!this.manager.structure) return;
+    tree.innerHTML = this.renderTreeNode(this.manager.structure.children || [], []);
+  }
+
+  renderTreeNode(children, parentPath) {
+    return children.map((child, idx) => {
+      const newPath = [...parentPath, child.name];
+      const isActive = JSON.stringify(this.manager.currentPath) === JSON.stringify(newPath);
+      const hasChildren = child.children && child.children.length > 0;
+      const isExpanded = newPath.every((p, i) => this.manager.currentPath[i] === p) && newPath.length <= this.manager.currentPath.length;
+      const uniqueId = `cat-${idx}-${parentPath.length}`;
+
+      return `
+        <li class="category-item">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            ${hasChildren ? `
+              <span class="category-toggle" onclick="event.stopPropagation(); document.getElementById('${uniqueId}').classList.toggle('expanded')">
+                ${isExpanded ? '▼' : '▶'}
+              </span>
+            ` : '<div style="width: 20px;"></div>'}
+            <a class="category-link ${isActive ? 'active' : ''}" onclick="ui.navigateTo(${JSON.stringify(newPath)})">
+              ${hasChildren ? '📁' : '📄'} ${escapeHtml(child.name)}
+            </a>
+          </div>
+          ${hasChildren ? `<ul class="category-children ${isExpanded ? 'expanded' : ''}" id="${uniqueId}">
+            ${this.renderTreeNode(child.children, newPath)}
+          </ul>` : ''}
+        </li>
+      `;
+    }).join('');
+  }
+
+  renderContent() {
+    const area = document.getElementById('contentArea');
+    const folders = this.manager.getChildFolders();
+    const questions = this.manager.getQuestionsAtPath();
+
+    if (folders.length === 0 && questions.length === 0) {
+      area.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <h2>No content here</h2>
+          <p>Select a category from the sidebar or create question.json files.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+
+    if (folders.length > 0) {
+      html += '<div class="cards-container">';
+      folders.forEach(folder => {
+        const path = [...this.manager.currentPath, folder.name];
+        const count = this.manager.countQuestionsInNode(folder);
+        html += `
+          <div class="card" onclick="ui.navigateTo(${JSON.stringify(path)})">
+            <div class="card-icon">📁</div>
+            <div class="card-title">${escapeHtml(folder.name)}</div>
+            <div class="card-meta">${count} question${count !== 1 ? 's' : ''}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+
+    if (questions.length > 0) {
+      html += `<div style="margin-top: 32px;">
+        <h2 style="margin-bottom: 16px; font-size: 1.25rem;">Questions (${questions.length})</h2>
+        <div class="cards-container">`;
+      questions.forEach(q => {
+        const progress = this.manager.progress[q.id] || { correct: 0, attempts: 0 };
+        const accuracy = progress.attempts > 0 ? Math.round((progress.correct / progress.attempts) * 100) : '-';
+        html += `
+          <div class="card" onclick="ui.showQuestion('${escapeHtml(q.id)}')">
+            <div class="card-title">${escapeHtml(q.text)}</div>
+            <div class="card-meta">${accuracy}% • ${progress.attempts} attempts</div>
+          </div>
+        `;
+      });
+      html += `</div></div>`;
+
+      html += `<div style="margin-top: 32px; display: flex; gap: 12px;">
+        <button class="btn btn-primary" onclick="ui.startQuiz()">🎯 Start Quiz</button>
+        <button class="btn btn-secondary" onclick="ui.startQuiz({ mode: 'review' })">📖 Review</button>
+      </div>`;
+    }
+
+    area.innerHTML = html;
+  }
+
+  navigateTo(path) {
+    this.manager.navigateTo(path);
+    this.render();
+  }
+
+  showQuestion(questionId) {
+    const questions = this.manager.getQuestionsAtPath();
+    const question = questions.find(q => q.id === questionId);
+    if (!question) return;
+
+    const allAnswers = this.shuffle([...question.correct, ...(question.incorrect || [])]);
+    this.showModal(`
+      <div class="modal-header">
+        <h2 class="modal-title">${escapeHtml(question.text)}</h2>
+        <button class="modal-close" onclick="ui.closeModal()">&times;</button>
+      </div>
+      <div class="answer-options" id="answerOptions">
+        ${allAnswers.map(ans => `
+          <label class="answer-option">
+            <input type="${question.type === 'single' ? 'radio' : 'checkbox'}" name="answer" value="${escapeHtml(ans)}">
+            <span>${escapeHtml(ans)}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="checkBtn">Check Answer</button>
+        <button class="btn btn-secondary" onclick="ui.closeModal()">Close</button>
+      </div>
+    `);
+
+    this.attachAnswerListeners(question.type);
+    document.getElementById('checkBtn').addEventListener('click', () => {
+      this.handleAnswer(question, () => this.closeModal());
+    });
+  }
+
+  startQuiz(options = {}) {
+    const questions = this.manager.getQuestionsAtPath();
+    if (questions.length === 0) {
+      this.showToast('No questions found', 'warning');
+      return;
+    }
+
+    let currentIdx = 0;
+    let score = 0;
+
+    const showQuestion = () => {
+      if (currentIdx >= questions.length) {
+        const percent = Math.round((score / questions.length) * 100);
+        this.showModal(`
+          <div class="modal-header">
+            <h2 class="modal-title">Quiz Complete! 🎉</h2>
+          </div>
+          <div style="text-align: center; padding: 32px;">
+            <div style="font-size: 3rem; font-weight: 700; color: var(--accent); margin-bottom: 16px;">${score}/${questions.length}</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${percent}%;"></div>
+            </div>
+            <p style="font-size: 1.25rem; color: var(--accent); margin-top: 16px;">${percent}% Correct</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" onclick="ui.closeModal(); ui.render();">Done</button>
+          </div>
+        `);
+        return;
+      }
+
+      const q = questions[currentIdx];
+      const allAnswers = this.shuffle([...q.correct, ...(q.incorrect || [])]);
+
+      this.showModal(`
+        <div class="quiz-progress">
+          <span>Question ${currentIdx + 1}/${questions.length}</span>
+          <span>Score: ${score}/${currentIdx}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${(currentIdx / questions.length) * 100}%;"></div>
+        </div>
+        <div class="quiz-question">${escapeHtml(q.text)}</div>
+        <div class="answer-options" id="answerOptions">
+          ${allAnswers.map(ans => `
+            <label class="answer-option">
+              <input type="${q.type === 'single' ? 'radio' : 'checkbox'}" name="answer" value="${escapeHtml(ans)}">
+              <span>${escapeHtml(ans)}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" id="nextBtn">Next</button>
+          <button class="btn btn-secondary" onclick="ui.closeModal(); ui.render();">Exit</button>
+        </div>
+      `);
+
+      this.attachAnswerListeners(q.type);
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        this.handleAnswer(q, () => {
+          currentIdx++;
+          showQuestion();
+        }, (correct) => {
+          if (correct) score++;
+        });
+      });
+    };
+
+    showQuestion();
+  }
+
+  attachAnswerListeners(type) {
+    document.querySelectorAll('.answer-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        if (option.classList.contains('feedback-mode')) return;
+        const input = option.querySelector('input');
+
+        if (type === 'single') {
+          document.querySelectorAll('.answer-option').forEach(o => o.classList.remove('selected'));
+          option.classList.add('selected');
+          input.checked = true;
+        } else {
+          option.classList.toggle('selected');
+          input.checked = !input.checked;
+        }
+      });
+    });
+  }
+
+  handleAnswer(question, nextCallback, scoreCallback) {
+    const selected = Array.from(document.querySelectorAll('input[name="answer"]:checked')).map(i => i.value);
+
+    if (selected.length === 0) {
+      this.showToast('Please select an answer', 'warning');
+      return;
+    }
+
+    const correct = JSON.stringify(selected.sort()) === JSON.stringify([...question.correct].sort());
+    this.manager.recordAnswer(question.id, correct);
+    if (scoreCallback) scoreCallback(correct);
+
+    document.querySelectorAll('.answer-option').forEach(option => {
+      const span = option.querySelector('span');
+      option.classList.add('feedback-mode');
+      if (question.correct.includes(span.textContent)) {
+        option.classList.add('correct-answer');
+      } else if (selected.includes(span.textContent)) {
+        option.classList.add('incorrect-selected');
+      }
+    });
+
+    const btn = document.getElementById('nextBtn') || document.getElementById('checkBtn');
+    if (btn) {
+      btn.textContent = '→ Continue';
+      btn.removeEventListener('click', btn.onclick);
+      btn.addEventListener('click', nextCallback);
+    }
+  }
+
+  exportProgress() {
+    const data = this.manager.exportProgress();
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `progress-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showToast('Progress exported!', 'success');
+  }
+
+  showModal(content) {
+    const overlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML = content;
+    overlay.classList.add('active');
+  }
+
+  closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+
+  showToast(msg, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠';
+    toast.textContent = `${icon} ${msg}`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'slideOutRight 0.4s ease forwards';
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
+  shuffle(arr) {
+    const result = [...arr];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const manager = new StudyManager();
+  window.ui = new UIManager(manager);
+  await window.ui.init();
+});
+</script>
+</body>
+</html>
